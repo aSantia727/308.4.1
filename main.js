@@ -1,42 +1,57 @@
-function CVSscript(CVSValue) {
-    const rows = CVSValue.split('\n');
-  
-    const numColumns = rows[0].split(',').length;
-    const results = [];
-    rows.forEach(row => {
-      const cells = row.split(',');
-  
-      if (cells.length === numColumns) {
-        results.push(cells);
-      }
-    });
+//part 2
 
-    const arry = [];
-  
-    for (let i = 1; i < results.length; i++) {
-      const row = results[i];
-      const arrys = {};
-  
-      for (let x = 0; x < row.length; x++) {
-        arrys[results[0][x].toLowerCase()] = row[x];
-      }
-  
-      arry.push(arrys);
+const data = [`ID,Name,Occupation,Age\n,42,Bruce,Knight,41\n,57,Bob,Fry Cook,19\n,63,Blaine,Quiz Master,58\n,98,Bill,Doctors Assistant,26`];
+
+function CSVdata(csvString) {
+  const lines = csvString.split('\n');
+  const headers = lines[0].split(',');
+  const data2 = data;
+
+  for (let i = 1; i < lines.length; i++) {
+    const row = lines[i].split(',');
+    const rowData = {};
+    for (let j = 0; j < headers.length; j++) {
+      rowData[headers[j].toLowerCase()] = row[j];
     }
-    
-    arry.pop();
-    arry.splice(1, 0, { id: "48", name: "Barry", occupation: "Runner", age: "25" });
-  
-    arry.push({ id: "7", name: "Bilbo", occupation: "None", age: "111" });
-
-    let totalAge = 0;
-    for (let i = 0; i < arry.length; i++) {
-      totalAge += parseInt(arry[i].age);
-    }
-    const averageAge = totalAge / arry.length;
-
-  
-    console.log("Average Age:", averageAge);
+    data2.push(rowData);
   }
 
-CVSscript()
+  return data2;
+}
+
+// part 3
+
+const transformedData = data.slice(1).map(row => {
+  const rowObject = {};
+  for (const key in row) {
+    rowObject[key.toLowerCase()] = row[key];
+  }
+  return rowObject;
+});
+
+console.log(transformedData);
+
+// part 4
+
+transformedData.pop();
+transformedData.splice(1, 0, { id: "48", name: "Barry", occupation: "Runner", age: "25" });
+transformedData.push({ id: "7", name: "Bilbo", occupation: "None", age: "111" });
+
+const totalAge = transformedData.reduce((sum, person) => sum + parseInt(person.age), 0);
+
+const averageAge = totalAge / transformedData.length;
+
+console.log("Average age:", averageAge);
+
+// part 5
+
+function convertToCSV(data) {
+  const headers = Object.keys(data[0]);
+  const headerRow = headers.join(',');
+  const dataRows = data.map(row => headers.map(key => row[key]).join(',')).join('\n');
+  return headerRow + '\n' + dataRows;
+}
+
+const csvOutput = convertToCSV(transformedData);
+
+console.log(csvOutput);
